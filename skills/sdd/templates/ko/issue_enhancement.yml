@@ -1,0 +1,44 @@
+name: "기능 개선"
+description: "기존 기능을 개선합니다"
+labels: ["sdd:analyze"]
+body:
+  - type: markdown
+    attributes:
+      value: "## 기능 개선 요청"
+
+  - type: textarea
+    id: background
+    attributes:
+      label: "요청 배경"
+      description: "현재 기능의 어떤 점이 부족한가요?"
+      placeholder: |
+        - 문제 / 동기:
+        - 사용자 피드백: (있다면)
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: "기능 설명"
+      description: "무엇을 변경해야 하나요?"
+      placeholder: |
+        - 한 줄 요약:
+        - 현재 동작:
+        - 원하는 동작:
+        - 관련 코드 경로: (알고 있다면)
+        - 참고 자료: (스크린샷, 유사 앱 예시 등)
+    validations:
+      required: true
+
+  - type: textarea
+    id: done
+    attributes:
+      label: "완료 기준 (Definition of Done)"
+      description: "이 개선이 완료된 것으로 간주되는 기준은?"
+      placeholder: |
+        - [ ] 기준 1:
+        - [ ] 기준 2:
+        - [ ] 기준 3:
+    validations:
+      required: false

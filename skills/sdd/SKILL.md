@@ -11,7 +11,7 @@ You are executing the SDD process. Route to the appropriate command based on `$0
 
 ## Command Routing
 
-- If `$0` is "init" → execute **INIT**
+- If `$0` is "init" → execute **INIT** with language `$1` (default: en)
 - If `$0` is "analyze" → execute **ANALYZE** with issue `$1`
 - If `$0` is "design" → execute **DESIGN** with issue `$1`
 - If `$0` is "implement" → execute **IMPLEMENT** with issue `$1`
@@ -26,7 +26,13 @@ You are executing the SDD process. Route to the appropriate command based on `$0
 
 Set up SDD for the current GitHub repository.
 
-1. Copy Issue templates from `${CLAUDE_SKILL_DIR}/templates/issue_*.yml` to `.github/ISSUE_TEMPLATE/`
+**Language argument:** `$1` determines the language for Issue templates.
+- `ko`, `korean`, `한국어` → Korean
+- `ja`, `japanese`, `日本語` → Japanese
+- `en`, `english`, or empty → English (default)
+
+1. Copy Issue templates from `${CLAUDE_SKILL_DIR}/templates/{lang}/issue_*.yml` to `.github/ISSUE_TEMPLATE/`
+   - Select the template directory based on the language argument
 2. Create GitHub labels:
    ```bash
    gh label create "sdd:analyze" --color "1d76db" --description "SDD: Requirements Analysis" --force
