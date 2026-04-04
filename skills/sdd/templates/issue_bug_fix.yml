@@ -1,0 +1,45 @@
+name: "Bug Fix"
+description: "Report a bug to fix"
+labels: ["sdd:analyze"]
+body:
+  - type: markdown
+    attributes:
+      value: "## Bug Report"
+
+  - type: textarea
+    id: background
+    attributes:
+      label: "Background"
+      description: "How to reproduce this bug?"
+      placeholder: |
+        - Steps to reproduce:
+        - Current behavior (bug):
+        - Expected behavior:
+    validations:
+      required: true
+
+  - type: textarea
+    id: details
+    attributes:
+      label: "Bug Details"
+      description: "Additional information about the bug"
+      placeholder: |
+        - Summary:
+        - Error log / Stack trace: (if any)
+        - Screenshots: (if any)
+        - Environment: (OS, device, app version)
+        - Related code path: (if known)
+    validations:
+      required: true
+
+  - type: textarea
+    id: done
+    attributes:
+      label: "Definition of Done"
+      description: "When is this bug considered fixed?"
+      placeholder: |
+        - [ ] Bug is no longer reproducible
+        - [ ] Existing tests pass
+        - [ ] Criteria 3:
+    validations:
+      required: false

@@ -1,0 +1,43 @@
+name: "New Feature"
+description: "Request a new feature"
+labels: ["sdd:analyze"]
+body:
+  - type: markdown
+    attributes:
+      value: "## New Feature Request"
+
+  - type: textarea
+    id: background
+    attributes:
+      label: "Background"
+      description: "Why is this feature needed?"
+      placeholder: |
+        - Problem / Motivation:
+        - User feedback: (if any)
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: "Feature Description"
+      description: "What should be built?"
+      placeholder: |
+        - Summary:
+        - Detailed description: (specific behavior, user scenario)
+        - Target screen: (which screen? new screen?)
+        - References: (screenshots, design mockups, similar app examples)
+    validations:
+      required: true
+
+  - type: textarea
+    id: done
+    attributes:
+      label: "Definition of Done"
+      description: "When is this feature considered complete?"
+      placeholder: |
+        - [ ] Criteria 1:
+        - [ ] Criteria 2:
+        - [ ] Criteria 3:
+    validations:
+      required: false

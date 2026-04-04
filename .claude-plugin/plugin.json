@@ -1,0 +1,11 @@
+{
+  "name": "sdd-plugin",
+  "description": "Spec-Driven Development (SDD) - AI collaborative development process with GitHub integration",
+  "version": "0.1.0",
+  "author": {
+    "name": "dev-yakuza"
+  },
+  "homepage": "https://github.com/dev-yakuza/sdd-plugin",
+  "repository": "https://github.com/dev-yakuza/sdd-plugin",
+  "license": "MIT"
+}

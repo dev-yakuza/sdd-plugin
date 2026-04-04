@@ -1,0 +1,44 @@
+name: "Enhancement"
+description: "Improve an existing feature"
+labels: ["sdd:analyze"]
+body:
+  - type: markdown
+    attributes:
+      value: "## Enhancement Request"
+
+  - type: textarea
+    id: background
+    attributes:
+      label: "Background"
+      description: "What is insufficient about the current feature?"
+      placeholder: |
+        - Problem / Motivation:
+        - User feedback: (if any)
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: "Feature Description"
+      description: "What should change?"
+      placeholder: |
+        - Summary:
+        - Current behavior:
+        - Desired behavior:
+        - Related code path: (if known)
+        - References: (screenshots, similar app examples)
+    validations:
+      required: true
+
+  - type: textarea
+    id: done
+    attributes:
+      label: "Definition of Done"
+      description: "When is this enhancement considered complete?"
+      placeholder: |
+        - [ ] Criteria 1:
+        - [ ] Criteria 2:
+        - [ ] Criteria 3:
+    validations:
+      required: false

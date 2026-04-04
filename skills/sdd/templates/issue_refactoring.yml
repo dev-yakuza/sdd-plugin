@@ -1,0 +1,43 @@
+name: "Refactoring"
+description: "Refactor existing code"
+labels: ["sdd:analyze"]
+body:
+  - type: markdown
+    attributes:
+      value: "## Refactoring Request"
+
+  - type: textarea
+    id: background
+    attributes:
+      label: "Background"
+      description: "What is the problem with the current code?"
+      placeholder: |
+        - Problem / Motivation:
+        - Improvement direction:
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: "Refactoring Description"
+      description: "What should be refactored?"
+      placeholder: |
+        - Summary:
+        - Target code path:
+        - Behavior change: (no change / change - describe if changed)
+        - References: (patterns, documents)
+    validations:
+      required: true
+
+  - type: textarea
+    id: done
+    attributes:
+      label: "Definition of Done"
+      description: "When is this refactoring considered complete?"
+      placeholder: |
+        - [ ] All existing tests pass
+        - [ ] No external behavior change
+        - [ ] Criteria 3:
+    validations:
+      required: false
