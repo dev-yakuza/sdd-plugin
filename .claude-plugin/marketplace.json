@@ -6,7 +6,7 @@
   "plugins": [
     {
       "name": "sdd-plugin",
-      "source": ".",
+      "source": "./plugins/sdd-plugin",
       "description": "Spec-Driven Development (SDD) - AI collaborative development process",
       "version": "0.5.0"
     }
