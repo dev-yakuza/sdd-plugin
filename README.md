@@ -12,8 +12,10 @@ claude /plugin install sdd-plugin@sdd-plugin
 ## Quick Start
 
 ```bash
-# 1. Set up SDD in your repository
-/sdd init
+# 1. Set up SDD in your repository (choose language)
+/sdd init           # English (default)
+/sdd init ko        # Korean
+/sdd init ja        # Japanese
 
 # 2. Create a GitHub Issue using SDD templates
 
@@ -28,7 +30,7 @@ claude /plugin install sdd-plugin@sdd-plugin
 
 | Command | Description |
 |---------|-------------|
-| `/sdd init` | Set up Issue templates and labels |
+| `/sdd init [lang]` | Set up Issue templates and labels. Languages: `en` (default), `ko`/`korean`/`한국어`, `ja`/`japanese`/`日本語` |
 | `/sdd analyze <issue>` | Stage 1: Requirements Analysis (What/Why) |
 | `/sdd design <issue>` | Stage 2: Design (How) |
 | `/sdd implement <issue>` | Stage 3: TDD Implementation |

@@ -33,7 +33,8 @@ Set up SDD for the current GitHub repository.
 
 1. Copy Issue templates from `${CLAUDE_SKILL_DIR}/templates/{lang}/issue_*.yml` to `.github/ISSUE_TEMPLATE/`
    - Select the template directory based on the language argument
-2. Create GitHub labels:
+2. Save the selected language to `.github/.sdd-lang` file for other commands to reference
+3. Create GitHub labels:
    ```bash
    gh label create "sdd:analyze" --color "1d76db" --description "SDD: Requirements Analysis" --force
    gh label create "sdd:design" --color "0e8a16" --description "SDD: Design" --force
@@ -41,7 +42,7 @@ Set up SDD for the current GitHub repository.
    gh label create "sdd:test" --color "f9d0c4" --description "SDD: Testing" --force
    gh label create "sdd:done" --color "0075ca" --description "SDD: Done" --force
    ```
-3. Report completion with a summary of what was installed.
+4. Report completion with a summary of what was installed.
 
 ---
 
@@ -57,7 +58,8 @@ Focus ONLY on What and Why. Do NOT discuss How (technical implementation).
 3. Analyze What (feature list) and Why (background, motivation)
 4. If information is missing, ask the user (do NOT ask How questions)
 5. Split into feature list with priorities
-6. Format output using the template in `${CLAUDE_SKILL_DIR}/templates/output_analyze.md`
+6. Read the language setting from `.github/.sdd-lang` (default: en)
+7. Format output using the template in `${CLAUDE_SKILL_DIR}/templates/{lang}/output_analyze.md`
 
 ### Self-Review:
 - Check for missing features, ambiguous descriptions
@@ -99,7 +101,8 @@ Define HOW to implement based on the requirements.
 5. Design data model changes (if applicable)
 6. Identify constraints and risks
 7. Create feature list with PR split
-8. Format output using the template in `${CLAUDE_SKILL_DIR}/templates/output_design.md`
+8. Read the language setting from `.github/.sdd-lang` (default: en)
+9. Format output using the template in `${CLAUDE_SKILL_DIR}/templates/{lang}/output_design.md`
 
 ### Self-Review:
 - Verify design matches requirements
@@ -237,7 +240,8 @@ Display available commands and usage:
 SDD (Spec-Driven Development) - AI Collaborative Development Process
 
 Commands:
-  /sdd init              Set up SDD for the current repository (Issue templates, labels)
+  /sdd init [lang]       Set up SDD for the current repository (Issue templates, labels)
+                         Languages: en (default), ko/korean/한국어, ja/japanese/日本語
   /sdd analyze <issue>   Stage 1: Requirements Analysis (What/Why)
   /sdd design <issue>    Stage 2: Design (How)
   /sdd implement <issue> Stage 3: Implementation with TDD (Red → Green → Refactor)
@@ -247,9 +251,10 @@ Commands:
   /sdd help              Show this help message
 
 Workflow:
-  1. Create an Issue using SDD templates
-  2. /sdd analyze <issue>   → analyzes What/Why, posts output to Issue
-  3. /sdd design <issue>    → designs How, posts output to Issue
-  4. /sdd implement <issue> → TDD cycle per PR
-  5. /sdd test <issue>      → E2E tests and QA
+  1. /sdd init [lang]       → set up repository (choose language for templates)
+  2. Create an Issue using SDD templates
+  3. /sdd analyze <issue>   → analyzes What/Why, posts output to Issue
+  4. /sdd design <issue>    → designs How, posts output to Issue
+  5. /sdd implement <issue> → TDD cycle per PR
+  6. /sdd test <issue>      → E2E tests and QA
 ```
