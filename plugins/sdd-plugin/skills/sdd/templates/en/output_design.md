@@ -16,10 +16,10 @@
 ### 3. Data Model
 -
 
-### 4. Feature List & PR Split
-| # | Feature | PR | Description |
-|---|---------|-----|-------------|
-| 1 | | #1 | |
-| 2 | | #1 | |
-| 3 | | #2 | |
+### 4. Feature List
+| # | Feature | Description |
+|---|---------|-------------|
+| 1 | | |
+| 2 | | |
+| 3 | | |
 <!-- /sdd:design:output -->
