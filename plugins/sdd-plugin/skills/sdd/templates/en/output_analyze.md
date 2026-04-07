@@ -14,7 +14,9 @@
 | 3 | | |
 
 ### 3. Priority
-1.
-2.
-3.
+| Rank | Feature | Reason |
+|------|---------|--------|
+| 1 | | |
+| 2 | | |
+| 3 | | |
 <!-- /sdd:analyze:output -->

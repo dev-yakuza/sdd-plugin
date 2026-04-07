@@ -41,4 +41,4 @@ body:
         - [ ] Criteria 2:
         - [ ] Criteria 3:
     validations:
-      required: false
+      required: true

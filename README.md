@@ -101,6 +101,16 @@ When the design stage identifies multiple PRs, SDD automatically creates child I
 /sdd test 100       # Parent-level E2E/QA testing
 ```
 
+### Language Configuration
+
+The language is saved to `.github/.sdd-lang` during `/sdd init`. All subsequent commands use this setting for templates and outputs.
+
+To change the language, run `/sdd init` again with the new language:
+
+```bash
+/sdd init ja        # Switch to Japanese
+```
+
 ## GitHub Integration
 
 All outputs are stored in GitHub — no separate file management needed.

@@ -21,6 +21,7 @@ You are executing the SDD process. Route to the appropriate command based on `$0
 - If `$0` is "review" → execute **REVIEW** with issue `$1`
 - If `$0` is "rollback" → execute **ROLLBACK** with issue `$1` and target stage `$2`
 - If `$0` is "help" or empty → execute **HELP**
+- If `$0` is anything else → report unknown command and execute **HELP**
 
 ---
 
@@ -57,6 +58,8 @@ Focus ONLY on What and Why. Do NOT discuss How (technical implementation).
 
 ### Process:
 1. Read the Issue: `gh issue view $1`
+   - If the Issue does not exist or is inaccessible → report error and stop
+   - If the Issue body is empty or malformed → ask user to fill in the required fields
 2. Check if this is a child Issue (body contains `Parent Issue: #<number>`):
    - If yes: read the parent Issue's analyze and design outputs for context
      ```bash
@@ -111,6 +114,7 @@ Define HOW to implement based on the requirements.
    ```bash
    gh api repos/{owner}/{repo}/issues/$1/comments --jq '.[].body' | grep -A 1000 'sdd:analyze:output' | grep -B 1000 '/sdd:analyze:output'
    ```
+   - If no analyze output found → report error: "Run `/sdd analyze $1` first" and stop
 2. Check if this is a child Issue (body contains `Parent Issue: #<number>`):
    - If yes: read the parent Issue's design output for context (architecture decisions, PR split rationale, constraints)
      ```bash
@@ -119,11 +123,11 @@ Define HOW to implement based on the requirements.
    - The child's design must be consistent with the parent's overall architecture and design decisions
    - Focus on the detailed design for this child's sub-feature only
 3. Explore the codebase — analyze existing architecture and patterns
-3. Identify impact scope (related files, screens, data)
-4. Design file structure changes
-5. Design data model changes (if applicable)
-6. Identify constraints and risks
-7. Create feature list with PR split
+4. Identify impact scope (related files, screens, data)
+5. Design file structure changes
+6. Design data model changes (if applicable)
+7. Identify constraints and risks
+8. Create feature list with PR split
 8. Read the language setting from `.github/.sdd-lang` (default: en)
 9. Format output using the template in `${CLAUDE_SKILL_DIR}/templates/{lang}/output_design.md`
 
@@ -153,7 +157,10 @@ When the design identifies 2 or more PRs, create a child Issue for each sub-feat
 1. Read the language setting from `.github/.sdd-lang` (default: en)
 2. For each sub-feature in the design:
    - Format the child Issue body using the template in `${CLAUDE_SKILL_DIR}/templates/{lang}/output_child_issue.md`
-   - Replace `{{parent_issue}}` with `$1`, `{{sub_feature_description}}` with design content, and `{{#each criteria}}` with the list of Definition of Done items from the design
+   - Placeholders are NOT processed by a template engine. AI must manually replace them:
+     - `{{parent_issue}}` → replace with `$1`
+     - `{{sub_feature_description}}` → replace with the sub-feature description from design
+     - `{{criteria_list}}` → replace with a markdown checkbox list from design (e.g. `- [ ] Criterion 1\n- [ ] Criterion 2`)
    ```bash
    gh issue create --title "[SDD Child] <parent title> - <sub-feature name>" \
      --body "<formatted body from template>" --label "sdd:analyze" --label "sdd:child"
@@ -174,7 +181,7 @@ When the design identifies 2 or more PRs, create a child Issue for each sub-feat
 
 1. Check if this Issue has child Issues:
    ```bash
-   gh api repos/{owner}/{repo}/issues/$1/comments --jq '.[].body' | grep 'sdd:children'
+   gh api repos/{owner}/{repo}/issues/$1/comments --jq '.[].body' | grep 'sdd:children:output'
    ```
 2. **Parent Issue (has children)**: Do NOT implement directly. Instead:
    - List child Issues and their current status
@@ -236,7 +243,7 @@ If this Issue is a child Issue (Issue body contains `Parent Issue: #<number>`):
    ```bash
    # Use jq to find the single comment containing both markers — avoids false matches
    gh api repos/{owner}/{repo}/issues/<parent>/comments \
-     --jq '.[] | select((.body | contains("<!-- sdd:children -->")) and (.body | contains("<!-- /sdd:children -->"))) | {id, body}'
+     --jq '.[] | select((.body | contains("<!-- sdd:children:output -->")) and (.body | contains("<!-- /sdd:children:output -->"))) | {id, body}'
    ```
    - If no matching comment found → warn user and skip update
    - If multiple comments match → use the **most recent one** (last in the array)
@@ -337,13 +344,13 @@ Automatically detect the current stage and continue the process.
    ```
    - Check for `<!-- sdd:analyze:output -->` marker
    - Check for `<!-- sdd:design:output -->` marker
-   - Check for `<!-- sdd:children -->` marker (parent Issue with children)
+   - Check for `<!-- sdd:children:output -->` marker (parent Issue with children)
 3. Check related PRs and their status:
    ```bash
    gh pr list --search "issue:$1" --json number,title,state
    ```
 
-### If Parent Issue (has `<!-- sdd:children -->` marker):
+### If Parent Issue (has `<!-- sdd:children:output -->` marker):
 1. Read child Issue numbers from the children comment
 2. Check each child Issue's current label:
    ```bash
@@ -358,7 +365,9 @@ Automatically detect the current stage and continue the process.
    - #126: <name> → sdd:analyze (not started)
    ```
 4. Determine action:
-   - If all children `sdd:done` → execute **TEST** on parent
+   - If all children `sdd:done`:
+     - Update parent label: `gh issue edit $1 --remove-label "sdd:implement" --add-label "sdd:test"`
+     - Execute **TEST** on parent
    - If any child is incomplete → ask user which child to resume, then execute **RESUME** on that child
 
 ### If Single Issue or Child Issue:
@@ -399,7 +408,7 @@ Check the current progress of an Issue.
 2. Check Issue comments for each stage output:
    - `<!-- sdd:analyze:output -->` exists?
    - `<!-- sdd:design:output -->` exists?
-   - `<!-- sdd:children -->` exists? (parent Issue)
+   - `<!-- sdd:children:output -->` exists? (parent Issue)
 3. Check related PRs: `gh pr list --search "issue:$1"`
 4. If parent Issue, check all child Issue statuses
 5. Summarize current stage and progress
@@ -435,7 +444,7 @@ Review the current stage output of an Issue.
 
 ### Determine Issue type:
 
-1. Check if this is a parent Issue (has `<!-- sdd:children -->` marker in comments)
+1. Check if this is a parent Issue (has `<!-- sdd:children:output -->` marker in comments)
 2. If **parent Issue** → execute **Parent Review** below
 3. If **single Issue or child Issue** → execute **Standard Review** below
 

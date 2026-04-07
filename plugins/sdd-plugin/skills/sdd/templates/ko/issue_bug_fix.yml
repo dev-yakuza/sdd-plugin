@@ -42,4 +42,4 @@ body:
         - [ ] 기존 테스트 통과
         - [ ] 기준 3:
     validations:
-      required: false
+      required: true

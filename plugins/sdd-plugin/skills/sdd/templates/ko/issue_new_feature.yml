@@ -40,4 +40,4 @@ body:
         - [ ] 기준 2:
         - [ ] 기준 3:
     validations:
-      required: false
+      required: true

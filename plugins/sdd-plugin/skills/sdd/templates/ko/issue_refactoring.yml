@@ -40,4 +40,4 @@ body:
         - [ ] 외부 동작 변경 없음
         - [ ] 기준 3:
     validations:
-      required: false
+      required: true

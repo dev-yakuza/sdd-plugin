@@ -8,7 +8,5 @@
 {{sub_feature_description}}
 
 ## 完了基準 (Definition of Done)
-{{#each criteria}}
-- [ ] {{this}}
-{{/each}}
+{{criteria_list}}
 <!-- /sdd:child-issue -->

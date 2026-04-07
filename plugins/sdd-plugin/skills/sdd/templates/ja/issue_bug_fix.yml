@@ -42,4 +42,4 @@ body:
         - [ ] 既存テストが通過すること
         - [ ] 基準 3:
     validations:
-      required: false
+      required: true

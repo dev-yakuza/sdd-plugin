@@ -42,4 +42,4 @@ body:
         - [ ] Existing tests pass
         - [ ] Criteria 3:
     validations:
-      required: false
+      required: true

@@ -9,12 +9,14 @@
 ### 2. File Structure
 | # | File Path | Action | Description |
 |---|-----------|--------|-------------|
-| 1 | | Add/Modify | |
-| 2 | | Add/Modify | |
-| 3 | | Add/Modify | |
+| 1 | | Add/Modify/Delete/Move | |
+| 2 | | Add/Modify/Delete/Move | |
+| 3 | | Add/Modify/Delete/Move | |
 
 ### 3. Data Model
--
+| Model | Field | Type | Description |
+|-------|-------|------|-------------|
+| | | | |
 
 ### 4. Constraints and Risks
 | # | Item | Description | Mitigation |

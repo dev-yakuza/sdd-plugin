@@ -40,4 +40,4 @@ body:
         - [ ] No external behavior change
         - [ ] Criteria 3:
     validations:
-      required: false
+      required: true

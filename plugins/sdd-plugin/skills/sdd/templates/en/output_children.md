@@ -1,5 +1,5 @@
-<!-- sdd:children -->
+<!-- sdd:children:output -->
 ## Child Issues
 | # | Issue | Sub-feature | Status |
 |---|-------|-------------|--------|
-<!-- /sdd:children -->
+<!-- /sdd:children:output -->
