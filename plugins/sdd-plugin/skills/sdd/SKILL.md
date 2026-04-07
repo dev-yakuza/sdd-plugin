@@ -81,11 +81,18 @@ Focus ONLY on What and Why. Do NOT discuss How (technical implementation).
 - On approval: post as Issue comment and update label to `sdd:design`
 
 ```bash
-# Post output as Issue comment
-gh issue comment $1 --body "$(cat <<'EOF'
-<output content here>
-EOF
-)"
+# Check if a previous analyze output exists (e.g. after rollback)
+EXISTING_COMMENT_ID=$(gh api repos/{owner}/{repo}/issues/$1/comments \
+  --jq '.[] | select(.body | contains("sdd:analyze:output")) | .id' | tail -1)
+
+if [ -n "$EXISTING_COMMENT_ID" ]; then
+  # Update the existing comment instead of creating a duplicate
+  gh api repos/{owner}/{repo}/issues/comments/$EXISTING_COMMENT_ID \
+    -X PATCH --field body="<output content here>"
+else
+  # Post new output as Issue comment
+  gh issue comment $1 --body "<output content here>"
+fi
 
 # Update label
 gh issue edit $1 --remove-label "sdd:analyze" --add-label "sdd:design"
@@ -129,7 +136,14 @@ Define HOW to implement based on the requirements.
 - Present the output to the user
 - Ask for confirmation on technical approach and PR split
 - On approval:
-  - If **single PR** → post as Issue comment and update label to `sdd:implement`
+  - Check if a previous design output exists (e.g. after rollback):
+    ```bash
+    EXISTING_COMMENT_ID=$(gh api repos/{owner}/{repo}/issues/$1/comments \
+      --jq '.[] | select(.body | contains("sdd:design:output")) | .id' | tail -1)
+    ```
+    - If exists → update the existing comment instead of creating a duplicate
+    - If not → post new output as Issue comment
+  - If **single PR** → update label to `sdd:implement`
   - If **multiple PRs** → execute **Child Issue Creation** below, then update label to `sdd:implement`
 
 ### Child Issue Creation (when multiple PRs are needed):
@@ -214,23 +228,33 @@ Test scope: Unit tests / UI tests (widget tests, golden tests, etc.)
 
 If this Issue is a child Issue (Issue body contains `Parent Issue: #<number>`):
 
-1. Find parent Issue number from Issue body:
+1. Find parent Issue number from the `<!-- sdd:child-issue -->` block in Issue body:
    ```bash
    gh issue view $1 --json body --jq '.body' | grep -oP 'Parent Issue: #\K[0-9]+'
    ```
-2. Read parent Issue's children comment:
+2. Find the children comment on parent Issue using `gh api` with `--jq` to get the **exact comment** with both start and end markers:
    ```bash
-   gh api repos/{owner}/{repo}/issues/<parent>/comments --jq '.[].body' | grep -A 1000 'sdd:children' | grep -B 1000 '/sdd:children'
+   # Use jq to find the single comment containing both markers — avoids false matches
+   gh api repos/{owner}/{repo}/issues/<parent>/comments \
+     --jq '.[] | select((.body | contains("<!-- sdd:children -->")) and (.body | contains("<!-- /sdd:children -->"))) | {id, body}'
    ```
-3. Update the children comment — change this child's status to `sdd:done`:
+   - If no matching comment found → warn user and skip update
+   - If multiple comments match → use the **most recent one** (last in the array)
+3. Update the children comment — replace this child's status label in the table row:
    ```bash
-   # Find the comment ID, then update it
-   COMMENT_ID=$(gh api repos/{owner}/{repo}/issues/<parent>/comments --jq '.[] | select(.body | contains("sdd:children")) | .id')
-   gh api repos/{owner}/{repo}/issues/comments/$COMMENT_ID -X PATCH --field body="<updated body>"
+   COMMENT_ID=<id from step 2>
+   # Read the comment body, replace the status for this child Issue's row, then update
+   gh api repos/{owner}/{repo}/issues/comments/$COMMENT_ID \
+     -X PATCH --field body="<updated body with new status>"
    ```
-4. Check if ALL child Issues are now `sdd:done`:
-   - If yes → add a comment to the parent Issue notifying all children are complete, and suggest running `/sdd test <parent>` or `/sdd resume <parent>`
-   - If no → report remaining children to the user and ask which child to work on next
+4. Verify the update was applied by re-reading the comment
+5. Check if ALL child Issues are now `sdd:done`:
+   - Read each child Issue's labels directly (do NOT rely only on the comment table):
+     ```bash
+     gh issue view <child-number> --json labels --jq '[.labels[].name]'
+     ```
+   - If all `sdd:done` → add a comment to the parent Issue notifying all children are complete, and suggest running `/sdd test <parent>` or `/sdd resume <parent>`
+   - If not → report remaining children to the user and ask which child to work on next
 
 ---
 
