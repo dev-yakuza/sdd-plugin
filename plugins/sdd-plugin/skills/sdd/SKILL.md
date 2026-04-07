@@ -128,8 +128,8 @@ Define HOW to implement based on the requirements.
 6. Design data model changes (if applicable)
 7. Identify constraints and risks
 8. Create feature list with PR split
-8. Read the language setting from `.github/.sdd-lang` (default: en)
-9. Format output using the template in `${CLAUDE_SKILL_DIR}/templates/{lang}/output_design.md`
+9. Read the language setting from `.github/.sdd-lang` (default: en)
+10. Format output using the template in `${CLAUDE_SKILL_DIR}/templates/{lang}/output_design.md`
 
 ### Self-Review:
 - Verify design matches requirements
