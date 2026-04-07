@@ -113,7 +113,27 @@ Define HOW to implement based on the requirements.
 ### User Review:
 - Present the output to the user
 - Ask for confirmation on technical approach and PR split
-- On approval: post as Issue comment and update label to `sdd:implement`
+- On approval:
+  - If **single PR** → post as Issue comment and update label to `sdd:implement`
+  - If **multiple PRs** → execute **Child Issue Creation** below, then update label to `sdd:implement`
+
+### Child Issue Creation (when multiple PRs are needed):
+
+When the design identifies 2 or more PRs, create a child Issue for each sub-feature:
+
+1. Read the language setting from `.github/.sdd-lang` (default: en)
+2. For each sub-feature in the design:
+   - Format the child Issue body using the template in `${CLAUDE_SKILL_DIR}/templates/{lang}/output_child_issue.md`
+   - Replace `{{parent_issue}}` with `$1`, `{{sub_feature_description}}` and `{{criteria}}` with design content
+   ```bash
+   gh issue create --title "[SDD Child] <parent title> - <sub-feature name>" \
+     --body "<formatted body from template>" --label "sdd:analyze"
+   ```
+3. Post the child Issue list as a comment on the parent Issue using the template in `${CLAUDE_SKILL_DIR}/templates/{lang}/output_children.md`
+   - Add a row for each created child Issue to the table
+3. Post design output as Issue comment on parent Issue
+4. Update parent Issue label to `sdd:implement`
+5. Ask user which child Issue to start with, then execute **ANALYZE** on that child Issue
 
 ---
 
@@ -121,11 +141,21 @@ Define HOW to implement based on the requirements.
 
 **Stage 3: Implementation - TDD Cycle (Red → Green → Refactor)**
 
-Execute per PR, repeating the TDD cycle.
+### Determine Issue type:
+
+1. Check if this Issue has child Issues:
+   ```bash
+   gh api repos/{owner}/{repo}/issues/$1/comments --jq '.[].body' | grep 'sdd:children'
+   ```
+2. **Parent Issue (has children)**: Do NOT implement directly. Instead:
+   - List child Issues and their current status
+   - Ask user which child Issue to work on
+   - Execute **ANALYZE** or **RESUME** on the selected child Issue
+3. **Single Issue or Child Issue (no children)**: Execute TDD cycle below
+
+### TDD Cycle (single Issue or child Issue):
 
 Test scope: Unit tests / UI tests (widget tests, golden tests, etc.)
-
-### For each PR:
 
 #### 3-0. PR Kickoff: Plan
 1. Read design output from Issue comments
@@ -155,12 +185,33 @@ Test scope: Unit tests / UI tests (widget tests, golden tests, etc.)
 
 #### 3-4. PR Creation & Code Review
 1. Summarize changes
-2. Create PR: `gh pr create --title "..." --body "..."`
+2. Create PR: `gh pr create --title "..." --body "Closes #$1\n\n..."`
 3. Re-run all tests → confirm pass
 4. **Self-review**: check code consistency, verify no missing features
 5. **User review**: final confirmation
-6. If more PRs remain → go back to 3-0
-7. All PRs done → update label to `sdd:test`
+6. Update label to `sdd:test`
+
+### After child Issue reaches `sdd:done`:
+
+If this Issue is a child Issue (Issue body contains `Parent Issue: #<number>`):
+
+1. Find parent Issue number from Issue body:
+   ```bash
+   gh issue view $1 --json body --jq '.body' | grep -oP 'Parent Issue: #\K[0-9]+'
+   ```
+2. Read parent Issue's children comment:
+   ```bash
+   gh api repos/{owner}/{repo}/issues/<parent>/comments --jq '.[].body' | grep -A 1000 'sdd:children' | grep -B 1000 '/sdd:children'
+   ```
+3. Update the children comment — change this child's status to `sdd:done`:
+   ```bash
+   # Find the comment ID, then update it
+   COMMENT_ID=$(gh api repos/{owner}/{repo}/issues/<parent>/comments --jq '.[] | select(.body | contains("sdd:children")) | .id')
+   gh api repos/{owner}/{repo}/issues/comments/$COMMENT_ID -X PATCH --field body="<updated body>"
+   ```
+4. Check if ALL child Issues are now `sdd:done`:
+   - If yes → add a comment to the parent Issue notifying all children are complete, and suggest running `/sdd test <parent>` or `/sdd resume <parent>`
+   - If no → report remaining children to the user and ask which child to work on next
 
 ---
 
@@ -170,11 +221,26 @@ Test scope: Unit tests / UI tests (widget tests, golden tests, etc.)
 
 Unit/UI tests are already done in Stage 3. This stage focuses on E2E and QA.
 
+### Determine Issue type:
+
+1. **Parent Issue (has children)**: Check all child Issues
+   - Read child Issue numbers from the children comment
+   - Check each child Issue's label:
+     ```bash
+     gh issue view <child-number> --json labels --jq '[.labels[].name]'
+     ```
+   - If any child Issue is NOT `sdd:done` → report which children are incomplete, ask user to complete them first
+   - If ALL child Issues are `sdd:done` → proceed with parent-level E2E/QA below
+2. **Single Issue or Child Issue**: proceed with E2E/QA below
+
 ### Process:
-1. Write E2E test code (integration tests)
-2. Start test environment → run E2E tests → check results
-3. Create QA checklist based on requirements
-4. Identify regression test targets
+1. Read analyze/design outputs from Issue comments
+2. If parent Issue: read all child Issues' implementation PRs to understand what was built
+3. If single/child Issue: read implementation PR
+4. Write E2E test code (integration tests)
+5. Start test environment → run E2E tests → check results
+6. Create QA checklist based on requirements
+7. Identify regression test targets
 
 ### User Tasks:
 1. Manual QA testing based on checklist
@@ -212,31 +278,54 @@ Automatically detect the current stage and continue the process.
    ```
    - Check for `<!-- sdd:analyze:output -->` marker
    - Check for `<!-- sdd:design:output -->` marker
+   - Check for `<!-- sdd:children -->` marker (parent Issue with children)
 3. Check related PRs and their status:
    ```bash
    gh pr list --search "issue:$1" --json number,title,state
    ```
-4. Determine resume point based on findings:
+
+### If Parent Issue (has `<!-- sdd:children -->` marker):
+1. Read child Issue numbers from the children comment
+2. Check each child Issue's current label:
+   ```bash
+   gh issue view <child-number> --json labels --jq '[.labels[].name]'
+   ```
+3. Report overall progress:
+   ```
+   Issue #$1: <title> (Parent)
+   Child Issues:
+   - #124: <name> → sdd:done ✓
+   - #125: <name> → sdd:implement (in progress)
+   - #126: <name> → sdd:analyze (not started)
+   ```
+4. Determine action:
+   - If all children `sdd:done` → execute **TEST** on parent
+   - If any child is incomplete → ask user which child to resume, then execute **RESUME** on that child
+
+### If Single Issue or Child Issue:
+
+Determine resume point based on findings:
 
    | Label | Output exists? | Action |
    |-------|---------------|--------|
    | `sdd:analyze` | No analyze output | Execute **ANALYZE** |
    | `sdd:design` | Analyze output exists, no design output | Execute **DESIGN** |
-   | `sdd:implement` | Design output exists | Execute **IMPLEMENT** (check PR progress to determine sub-step) |
+   | `sdd:implement` | Design output exists | Execute **IMPLEMENT** |
    | `sdd:test` | Implementation PRs merged | Execute **TEST** |
    | `sdd:done` | All complete | Report: Issue is already complete |
    | No SDD label | — | Add `sdd:analyze` label and execute **ANALYZE** |
 
-5. For `sdd:implement` stage, further check sub-step:
-   - If no open PRs and remaining features in design → start next PR (3-0)
+For `sdd:implement` stage, further check sub-step:
+   - If no open PRs → start PR (3-0)
    - If open PR exists → check branch, read PR diff, and continue TDD cycle
-6. Report current status to user before continuing:
+
+Report current status to user before continuing:
    ```
    Issue #$1: <title>
    Current stage: <stage>
    Resuming from: <specific point>
    ```
-7. Ask user for confirmation, then execute the appropriate stage command
+Ask user for confirmation, then execute the appropriate stage command
 
 ---
 
@@ -248,16 +337,31 @@ Check the current progress of an Issue.
 2. Check Issue comments for each stage output:
    - `<!-- sdd:analyze:output -->` exists?
    - `<!-- sdd:design:output -->` exists?
+   - `<!-- sdd:children -->` exists? (parent Issue)
 3. Check related PRs: `gh pr list --search "issue:$1"`
-4. Summarize current stage and progress
+4. If parent Issue, check all child Issue statuses
+5. Summarize current stage and progress
 
-Output format:
+Output format (single Issue):
 ```
 Issue #$1: <title>
 Stage: <current stage based on label>
 - [x] Analyze: completed
 - [x] Design: completed
-- [ ] Implement: PR #1 in progress
+- [ ] Implement: in progress
+- [ ] Test: not started
+```
+
+Output format (parent Issue):
+```
+Issue #$1: <title> (Parent)
+Stage: implement
+- [x] Analyze: completed
+- [x] Design: completed (3 child Issues created)
+- [ ] Implement:
+  - #124: <name> → sdd:done ✓
+  - #125: <name> → sdd:implement
+  - #126: <name> → sdd:analyze
 - [ ] Test: not started
 ```
 
