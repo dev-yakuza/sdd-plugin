@@ -36,6 +36,7 @@ claude /plugin install sdd-plugin@sdd-plugin
 | `/sdd implement <issue>` | Stage 3: TDD Implementation |
 | `/sdd test <issue>` | Stage 4: E2E/QA Testing |
 | `/sdd resume <issue>` | Auto-detect stage and continue from where it left off |
+| `/sdd rollback <issue> <stage>` | Roll back to a previous stage (analyze, design, implement) |
 | `/sdd status <issue>` | Check current progress |
 | `/sdd review <issue>` | AI review of current output |
 | `/sdd help` | Show usage |
