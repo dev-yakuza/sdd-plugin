@@ -1,3 +1,4 @@
+<!-- sdd:child-issue -->
 상위 Issue: #{{parent_issue}}
 
 ## 배경
@@ -8,3 +9,4 @@
 
 ## 완료 기준 (Definition of Done)
 - [ ] {{criteria}}
+<!-- /sdd:child-issue -->

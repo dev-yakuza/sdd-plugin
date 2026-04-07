@@ -16,10 +16,15 @@
 ### 3. Data Model
 -
 
-### 4. Feature List
-| # | Feature | Description |
-|---|---------|-------------|
-| 1 | | |
-| 2 | | |
-| 3 | | |
+### 4. Constraints and Risks
+| # | Item | Description | Mitigation |
+|---|------|-------------|------------|
+| 1 | | | |
+
+### 5. Feature List with PR Split
+| PR | Feature | Description | Dependencies |
+|----|---------|-------------|--------------|
+| 1 | | | |
+| 2 | | | |
+| 3 | | | |
 <!-- /sdd:design:output -->

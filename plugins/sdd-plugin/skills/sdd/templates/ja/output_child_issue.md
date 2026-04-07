@@ -1,3 +1,4 @@
+<!-- sdd:child-issue -->
 親Issue: #{{parent_issue}}
 
 ## 背景
@@ -8,3 +9,4 @@
 
 ## 完了基準 (Definition of Done)
 - [ ] {{criteria}}
+<!-- /sdd:child-issue -->

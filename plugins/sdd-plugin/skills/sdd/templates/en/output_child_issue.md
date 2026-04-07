@@ -1,3 +1,4 @@
+<!-- sdd:child-issue -->
 Parent Issue: #{{parent_issue}}
 
 ## Background
@@ -8,3 +9,4 @@ This is a child Issue created from the SDD design phase of #{{parent_issue}}.
 
 ## Definition of Done
 - [ ] {{criteria}}
+<!-- /sdd:child-issue -->

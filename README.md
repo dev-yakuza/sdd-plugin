@@ -102,6 +102,7 @@ All outputs are stored in GitHub — no separate file management needed.
 | `sdd:implement` | Implementation |
 | `sdd:test` | Testing |
 | `sdd:done` | Complete |
+| `sdd:child` | Child Issue (created from Design stage) |
 
 ## License
 
