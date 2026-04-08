@@ -29,8 +29,3 @@ Execute the following loop (maximum **3 rounds**):
 - **design**: Does design match requirements? Missing impact scope? Feasible? Architecture consistent? Risks identified?
 - **implement**: Code quality? Test coverage? Pattern consistency? No unnecessary code? PR description accurate?
 - **test**: Test coverage sufficient? Edge cases covered? Regression risks addressed?
-
-## Present to User:
-- Show the final output
-- Include a review summary: total rounds, issues found and fixed, final AI review verdict
-- Then proceed to user review as defined in the calling command

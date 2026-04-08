@@ -26,13 +26,8 @@ Define HOW to implement based on the requirements.
 9. Read the language setting from `.github/.sdd-lang` (default: en)
 10. Format output using the template in `${CLAUDE_SKILL_DIR}/templates/{lang}/output_design.md`
 
-## Self-Review Criteria (used in review loop):
-- Verify design matches requirements
-- Check for missing impact scope
-- Assess feasibility
-
 ## Review Loop:
-Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with the output above (stage: **design**). Use the self-review criteria above for self-review steps within the loop.
+Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with the output above (stage: **design**).
 
 ## User Review:
 - Present the output to the user with review loop results (rounds, issues fixed, verdict)

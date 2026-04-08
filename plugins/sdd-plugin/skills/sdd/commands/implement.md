@@ -52,9 +52,9 @@ Test scope: Unit tests / UI tests (widget tests, golden tests, etc.)
    - Single Issue: `gh pr create --title "..." --body "Closes #$1\n\n..."`
    - Child Issue: `gh pr create --title "..." --body "Closes #$1\nParent Issue: #<parent>\n\n..."`
 3. Re-run all tests → confirm pass
-4. **Review Loop**: Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with the implementation changes (stage: **implement**). Self-review criteria: check code consistency, verify no missing features
+4. **Review Loop**: Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with the implementation changes (stage: **implement**)
 5. **User review**: present review loop results (rounds, issues fixed, verdict), final confirmation
-7. Update label to `sdd:test`
+6. Update label to `sdd:test`
 
 ## After child Issue reaches `sdd:done`:
 
