@@ -7,13 +7,13 @@ Define HOW to implement based on the requirements.
 ## Process:
 1. Read analyze output from Issue comments:
    ```bash
-   gh api repos/{owner}/{repo}/issues/$1/comments --jq '.[].body' | grep -A 1000 'sdd:analyze:output' | grep -B 1000 '/sdd:analyze:output'
+   gh api repos/{owner}/{repo}/issues/$1/comments --jq '.[] | select(.body | contains("sdd:analyze:output")) | .body'
    ```
    - If no analyze output found → report error: "Run `/sdd analyze $1` first" and stop
 2. Check if this is a child Issue (body contains `Parent Issue: #<number>`):
    - If yes: read the parent Issue's design output for context (architecture decisions, PR split rationale, constraints)
      ```bash
-     gh api repos/{owner}/{repo}/issues/<parent>/comments --jq '.[].body' | grep -A 1000 'sdd:design:output' | grep -B 1000 '/sdd:design:output'
+     gh api repos/{owner}/{repo}/issues/<parent>/comments --jq '.[] | select(.body | contains("sdd:design:output")) | .body'
      ```
    - The child's design must be consistent with the parent's overall architecture and design decisions
    - Focus on the detailed design for this child's sub-feature only

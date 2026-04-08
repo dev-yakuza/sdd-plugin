@@ -11,7 +11,7 @@ Automatically detect the current stage and continue the process.
    ```
 2. Check Issue comments for existing stage outputs:
    ```bash
-   gh api repos/{owner}/{repo}/issues/$1/comments --jq '.[].body'
+   gh api repos/{owner}/{repo}/issues/$1/comments --jq '.[] | select(.body | contains("sdd:analyze:output") or contains("sdd:design:output") or contains("sdd:children:output")) | .body'
    ```
    - Check for `<!-- sdd:analyze:output -->` marker
    - Check for `<!-- sdd:design:output -->` marker

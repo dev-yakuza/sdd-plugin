@@ -6,7 +6,7 @@
 
 1. Check if this Issue has child Issues:
    ```bash
-   gh api repos/{owner}/{repo}/issues/$1/comments --jq '.[].body' | grep 'sdd:children:output'
+   gh api repos/{owner}/{repo}/issues/$1/comments --jq '.[] | select(.body | contains("sdd:children:output")) | .body' | head -1
    ```
 2. **Parent Issue (has children)**: Do NOT implement directly. Instead:
    - List child Issues and their current status

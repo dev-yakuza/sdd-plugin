@@ -11,7 +11,7 @@ Focus ONLY on What and Why. Do NOT discuss How (technical implementation).
 2. Check if this is a child Issue (body contains `Parent Issue: #<number>`):
    - If yes: read the parent Issue's analyze and design outputs for context
      ```bash
-     gh api repos/{owner}/{repo}/issues/<parent>/comments --jq '.[].body'
+     gh api repos/{owner}/{repo}/issues/<parent>/comments --jq '.[] | select(.body | contains("sdd:analyze:output") or contains("sdd:design:output")) | .body'
      ```
    - Use parent context to understand the broader scope, but focus analysis on this child's sub-feature only
 3. Classify the request type (new feature / enhancement / bug fix / refactoring)
