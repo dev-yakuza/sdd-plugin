@@ -21,15 +21,14 @@ Focus ONLY on What and Why. Do NOT discuss How (technical implementation).
 7. Read the language setting from `.github/.sdd-lang` (default: en)
 8. Format output using the template in `${CLAUDE_SKILL_DIR}/templates/{lang}/output_analyze.md`
 
-## Self-Review:
+## Self-Review Criteria (used in review loop):
 - Check for missing features, ambiguous descriptions
 - Verify What/Why are sufficient
-- If issues found, go back and improve
 
-## AI Review:
-Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with the output above (stage: **analyze**).
+## Review Loop:
+Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with the output above (stage: **analyze**). Use the self-review criteria above for self-review steps within the loop.
 
 ## User Review:
-- Present the output to the user with self-review and AI review results
+- Present the output to the user with review loop results (rounds, issues fixed, verdict)
 - Ask for confirmation on direction and priorities
 - On approval: post as Issue comment (using duplicate prevention from Common Definitions) and update label to `sdd:design`

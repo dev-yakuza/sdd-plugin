@@ -30,11 +30,10 @@ Unit/UI tests are already done in Stage 3. This stage focuses on E2E and QA.
 3. If single/child Issue: read implementation PR
 4. Write E2E test code using the detected framework, following existing test patterns and directory structure
 5. Start test environment → run E2E tests → check results
-6. **Self-review**: analyze test logs, verify coverage, estimate bug causes
+6. **Review Loop**: Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with E2E test results (stage: **test**). Self-review criteria: analyze test logs, verify coverage, estimate bug causes
    - If E2E tests fail → fix test code or identify bugs
    - If bugs found → go back to Stage 3 for TDD bug fix cycle
-7. **AI Review**: Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with E2E test results (stage: **test**)
-8. **User review**: present self-review and AI review results, confirm E2E test code and results
+7. **User review**: present review loop results (rounds, issues fixed, verdict), confirm E2E test code and results
 
 ## 4-2. QA Checklist (AI creates, AI + User review):
 1. Create QA checklist based on requirements
