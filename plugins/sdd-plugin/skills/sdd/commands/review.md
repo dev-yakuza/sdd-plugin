@@ -18,9 +18,6 @@ Review the current stage output of an Issue.
    - **implement**: code quality, pattern consistency, test coverage?
    - **test**: test coverage, regression risks?
 4. If child Issue: also check consistency with parent Issue's design
-   ```bash
-   gh issue view $1 --json body --jq '.body' | grep -oP 'Parent Issue: #\K[0-9]+'
-   ```
    - Read parent's design output and verify child's work aligns with overall architecture
 5. Post review result as Issue comment
 

@@ -8,10 +8,7 @@ Unit/UI tests are already done in Stage 3. This stage focuses on E2E and QA.
 
 1. **Parent Issue (has children)**: Check all child Issues
    - Read child Issue numbers from the children comment
-   - Check each child Issue's label:
-     ```bash
-     gh issue view <child-number> --json labels --jq '[.labels[].name]'
-     ```
+   - Check each child Issue's label
    - If any child Issue is NOT `sdd:done` → report which children are incomplete, ask user to complete them first
    - If ALL child Issues are `sdd:done` → proceed with parent-level E2E/QA below
 2. **Single Issue or Child Issue**: proceed with E2E/QA below
@@ -53,7 +50,3 @@ Unit/UI tests are already done in Stage 3. This stage focuses on E2E and QA.
 ## 4-4. Results Review:
 1. If any QA item fails → analyze cause, go back to Stage 3 for TDD bug fix cycle
 2. All tests pass → update label to `sdd:done`
-
-```bash
-gh issue edit $1 --remove-label "sdd:test" --add-label "sdd:done"
-```

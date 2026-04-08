@@ -7,10 +7,7 @@ Usage: `/sdd rollback <issue> <target-stage>`
 Target stages: `analyze`, `design`, `implement`
 
 ## Process:
-1. Read current Issue labels and stage:
-   ```bash
-   gh issue view $1 --json labels --jq '[.labels[].name]'
-   ```
+1. Read current Issue labels and stage
 2. Validate rollback direction:
    - Can only roll back to an **earlier** stage (e.g. `design` → `analyze`, `implement` → `design`)
    - Cannot roll back to `test` or `done`
@@ -22,10 +19,7 @@ Target stages: `analyze`, `design`, `implement`
    - Change label from <current> to <target>
    - Previous stage outputs in Issue comments will be preserved for reference
    ```
-4. On user confirmation, update labels:
-   ```bash
-   gh issue edit $1 --remove-label "<current label>" --add-label "sdd:<target>"
-   ```
+4. On user confirmation, update labels
 5. Post a rollback notice as Issue comment:
    ```markdown
    <!-- sdd:rollback -->

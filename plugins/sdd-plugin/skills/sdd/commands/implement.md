@@ -60,10 +60,7 @@ Test scope: Unit tests / UI tests (widget tests, golden tests, etc.)
 
 If this Issue is a child Issue (Issue body contains `Parent Issue: #<number>`):
 
-1. Find parent Issue number from the `<!-- sdd:child-issue -->` block in Issue body:
-   ```bash
-   gh issue view $1 --json body --jq '.body' | grep -oP 'Parent Issue: #\K[0-9]+'
-   ```
+1. Find parent Issue number from the `<!-- sdd:child-issue -->` block in Issue body
 2. Find the children comment on parent Issue using `gh api` with `--jq` to get the **exact comment** with both start and end markers:
    ```bash
    # Use jq to find the single comment containing both markers — avoids false matches
@@ -81,9 +78,6 @@ If this Issue is a child Issue (Issue body contains `Parent Issue: #<number>`):
    ```
 4. Verify the update was applied by re-reading the comment
 5. Check if ALL child Issues are now `sdd:done`:
-   - Read each child Issue's labels directly (do NOT rely only on the comment table):
-     ```bash
-     gh issue view <child-number> --json labels --jq '[.labels[].name]'
-     ```
+   - Read each child Issue's labels directly (do NOT rely only on the comment table)
    - If all `sdd:done` → add a comment to the parent Issue notifying all children are complete, and suggest running `/sdd test <parent>` or `/sdd resume <parent>`
    - If not → report remaining children to the user and ask which child to work on next

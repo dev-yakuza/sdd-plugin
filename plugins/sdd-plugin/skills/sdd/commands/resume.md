@@ -23,10 +23,7 @@ Automatically detect the current stage and continue the process.
 
 ## If Parent Issue (has `<!-- sdd:children:output -->` marker):
 1. Read child Issue numbers from the children comment
-2. Check each child Issue's current label:
-   ```bash
-   gh issue view <child-number> --json labels --jq '[.labels[].name]'
-   ```
+2. Check each child Issue's current label
 3. Report overall progress:
    ```
    Issue #$1: <title> (Parent)

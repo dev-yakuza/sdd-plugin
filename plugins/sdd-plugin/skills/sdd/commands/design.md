@@ -37,7 +37,7 @@ Define HOW to implement based on the requirements.
 - On approval:
   - Post as Issue comment (using duplicate prevention from Common Definitions)
   - If **single PR** → update label to `sdd:implement`
-  - If **multiple PRs** → execute **Child Issue Creation** below, then update label to `sdd:implement`
+  - If **multiple PRs** → execute **Child Issue Creation** below
 
 ## Child Issue Creation (when multiple PRs are needed):
 

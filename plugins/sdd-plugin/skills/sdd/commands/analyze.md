@@ -30,8 +30,3 @@ Focus ONLY on What and Why. Do NOT discuss How (technical implementation).
 - Present the output to the user
 - Ask for confirmation on direction and priorities
 - On approval: post as Issue comment (using duplicate prevention from Common Definitions) and update label to `sdd:design`
-
-```bash
-# Update label
-gh issue edit $1 --remove-label "sdd:analyze" --add-label "sdd:design"
-```
