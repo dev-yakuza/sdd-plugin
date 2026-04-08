@@ -35,14 +35,7 @@ You are executing the SDD process. Route to the appropriate command based on `$0
 ```
 
 ### Labels
-| Label | Stage | Color |
-|-------|-------|-------|
-| `sdd:analyze` | Requirements Analysis | `#1d76db` |
-| `sdd:design` | Design | `#0e8a16` |
-| `sdd:implement` | Implementation | `#e4e669` |
-| `sdd:test` | Testing | `#f9d0c4` |
-| `sdd:done` | Complete | `#0075ca` |
-| `sdd:child` | Child Issue | `#d4c5f9` |
+`sdd:analyze` → `sdd:design` → `sdd:implement` → `sdd:test` → `sdd:done` | `sdd:child` (child Issue)
 
 ### Output Markers
 | Marker | Location | Purpose |
@@ -64,11 +57,5 @@ You are executing the SDD process. Route to the appropriate command based on `$0
 - Languages: `en` (default), `ko`/`korean`/`한국어`, `ja`/`japanese`/`日本語`
 
 ### Duplicate Output Prevention
-When posting stage outputs (analyze/design), check if a previous output exists first:
-```bash
-EXISTING_COMMENT_ID=$(gh api repos/{owner}/{repo}/issues/$1/comments \
-  --jq '.[] | select(.body | contains("<marker>")) | .id' | tail -1)
-```
-- If exists → update the existing comment instead of creating a duplicate
-- If not → post new output as Issue comment
+Before posting a stage output, search Issue comments for the matching marker. If found → update that comment. If not → create new comment.
 
