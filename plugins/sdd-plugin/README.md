@@ -68,11 +68,12 @@ Execute per PR with the TDD cycle:
 3-1. Red: Write Failing Tests
 3-2. Green: Minimal Implementation
 3-3. Refactor: Improve Code
-3-4. PR Creation & Code Review
+3-4. PR Creation & Code Review (includes Manual Test Checklist)
 → Repeat for next PR
 ```
 
 Test scope: Unit tests / UI tests
+PR includes a manual test checklist for reviewers to verify UI behavior, user flows, and edge cases.
 
 ### Stage 4: Testing
 

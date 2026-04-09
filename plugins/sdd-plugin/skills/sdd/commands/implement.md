@@ -48,13 +48,17 @@ Test scope: Unit tests / UI tests (widget tests, golden tests, etc.)
 
 ### 3-4. PR Creation & Code Review
 1. Summarize changes
-2. Create PR:
-   - Single Issue: `gh pr create --title "..." --body "Closes #$1\n\n..."`
-   - Child Issue: `gh pr create --title "..." --body "Closes #$1\nParent Issue: #<parent>\n\n..."`
-3. Re-run all tests → confirm pass
-4. **Review Loop**: Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with the implementation changes (stage: **implement**)
-5. **User review**: present review loop results (rounds, issues fixed, verdict), final confirmation
-6. Update label to `sdd:test`
+2. Create manual test checklist for this PR's scope:
+   - Based on the changes made, list items a reviewer should manually verify
+   - Focus on UI behavior, user flows, edge cases that automated tests don't cover
+   - Format as a markdown checklist (e.g. `- [ ] Verify button click navigates to...`)
+3. Create PR with manual test checklist included:
+   - Single Issue: `gh pr create --title "..." --body "Closes #$1\n\n...\n\n## Manual Test Checklist\n<checklist>"`
+   - Child Issue: `gh pr create --title "..." --body "Closes #$1\nParent Issue: #<parent>\n\n...\n\n## Manual Test Checklist\n<checklist>"`
+4. Re-run all tests → confirm pass
+5. **Review Loop**: Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with the implementation changes (stage: **implement**)
+6. **User review**: present review loop results (rounds, issues fixed, verdict), final confirmation
+7. Update label to `sdd:test`
 
 ## After child Issue reaches `sdd:done`:
 
