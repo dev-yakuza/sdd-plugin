@@ -25,6 +25,11 @@ Focus ONLY on What and Why. Do NOT discuss How (technical implementation).
 Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with the output above (stage: **analyze**).
 
 ## User Review:
-- Present the output to the user with review loop results (rounds, issues fixed, verdict)
-- Ask for confirmation on direction and priorities
-- On approval: post as Issue comment (using duplicate prevention from Common Definitions) and update label to `sdd:design`
+1. Check skip-review setting (see Common Definitions → Skip Review Setting)
+2. If `analyze` is in skip-review:
+   - Log: "User review skipped (skip-review: analyze)"
+   - Auto-approve: post as Issue comment (using duplicate prevention from Common Definitions) and update label to `sdd:design`
+3. If `analyze` is NOT in skip-review:
+   - Present the output to the user with review loop results (rounds, issues fixed, verdict)
+   - Ask for confirmation on direction and priorities
+   - On approval: post as Issue comment (using duplicate prevention from Common Definitions) and update label to `sdd:design`

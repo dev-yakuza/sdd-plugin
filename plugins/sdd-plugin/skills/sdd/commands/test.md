@@ -33,16 +33,20 @@ Unit/UI tests are already done in Stage 3. This stage focuses on E2E and QA.
 6. **Review Loop**: Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with E2E test results (stage: **test**)
    - If E2E tests fail → fix test code or identify bugs
    - If bugs found → go back to Stage 3 for TDD bug fix cycle
-7. **User review**: present review loop results (rounds, issues fixed, verdict), confirm E2E test code and results
+7. **User review**: Check skip-review setting (see Common Definitions → Skip Review Setting)
+   - If `qa` is in skip-review → log "User review skipped (skip-review: qa)" and proceed
+   - Otherwise → present review loop results (rounds, issues fixed, verdict), confirm E2E test code and results
 
 ## 4-2. QA Checklist (AI creates, AI + User review):
 1. Create QA checklist based on requirements
 2. Identify regression test targets
 3. **Self-review**: check for missing test scenarios, edge cases, and regression risks
-4. **User review**: confirm QA checklist is complete and correct
-   - User may add/remove/modify checklist items
+4. **User review**: Check skip-review setting (see Common Definitions → Skip Review Setting)
+   - If `qa` is in skip-review → log "User review skipped (skip-review: qa)", auto-approve checklist and skip to 4-4
+   - Otherwise → confirm QA checklist is complete and correct. User may add/remove/modify checklist items. Then proceed to 4-3.
 
 ## 4-3. Manual QA (User executes):
+**Note**: This step is skipped entirely if `qa` is in skip-review.
 1. User performs manual QA testing based on the approved checklist
 2. User runs regression tests
 3. User reports results (pass/fail per checklist item)

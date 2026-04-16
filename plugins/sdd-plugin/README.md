@@ -39,6 +39,7 @@ claude /plugin install deku-claude-plugins@sdd-plugin
 | `/sdd rollback <issue> <stage>` | Roll back to a previous stage (analyze, design, implement) |
 | `/sdd status <issue>` | Check current progress |
 | `/sdd review <issue>` | AI review of current output |
+| `/sdd config` | Show or update SDD settings |
 | `/sdd help` | Show usage |
 
 ## Process
@@ -101,6 +102,31 @@ When the design stage identifies multiple PRs, SDD automatically creates child I
 # After all children are done
 /sdd test 100       # Parent-level E2E/QA testing
 ```
+
+### Skip Review Configuration
+
+By default, every stage requires user review. You can skip user review for specific stages using `/sdd config`:
+
+```bash
+# Set skip-review
+/sdd config --skip-review=analyze,design,implement
+
+# Check current settings
+/sdd config
+
+# Reset (enable all reviews)
+/sdd config --skip-review=
+```
+
+| Value | Skipped Review |
+|-------|---------------|
+| `analyze` | User review after requirements analysis |
+| `design` | User review after design |
+| `implement` | User review at TDD substeps (3-0 ~ 3-3) |
+| `pr` | User review at PR code review (3-4) |
+| `qa` | Manual QA execution (4-2 ~ 4-3) |
+
+Settings are saved to `.github/.sdd-config`. AI review always runs regardless of this setting.
 
 ### Language Configuration
 

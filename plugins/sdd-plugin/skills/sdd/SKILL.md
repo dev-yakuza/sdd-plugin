@@ -14,7 +14,7 @@ You are executing the SDD process. Route to the appropriate command based on `$0
 ## Command Routing
 
 Read `${CLAUDE_SKILL_DIR}/commands/$0.md` and execute. Pass `$1` as issue number (or language for init), `$2` as target stage for rollback.
-- Valid commands: `init`, `analyze`, `design`, `implement`, `test`, `resume`, `status`, `review`, `rollback`, `help`
+- Valid commands: `init`, `analyze`, `design`, `implement`, `test`, `resume`, `status`, `review`, `rollback`, `config`, `help`
 - If `$0` is empty → route to `help`
 - If `$0` is not in the list above → report unknown command, then route to `help`
 
@@ -48,6 +48,13 @@ Read `${CLAUDE_SKILL_DIR}/commands/$0.md` and execute. Pass `$1` as issue number
 - Stored in `.github/.sdd-lang` (default: en)
 - Set by `/sdd init [lang]`
 - Languages: `en` (default), `ko`/`korean`/`한국어`, `ja`/`japanese`/`日本語`
+
+### Skip Review Setting
+- Stored in `.github/.sdd-config` as `skip-review: <values>`
+- Set by `/sdd config --skip-review=<values>`
+- Values: `analyze`, `design`, `implement`, `pr`, `qa` (comma-separated)
+- When a stage's review is skipped, AI review still runs but user review is auto-approved
+- To check: read `.github/.sdd-config` and parse `skip-review` line. If file missing or no `skip-review` line → no reviews are skipped
 
 ### Repository Owner/Repo
 Commands using `gh api` need `{owner}/{repo}`. Obtain via: `gh repo view --json nameWithOwner -q .nameWithOwner`

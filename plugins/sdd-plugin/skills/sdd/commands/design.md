@@ -37,12 +37,20 @@ Define HOW to implement based on the requirements.
 Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with the output above (stage: **design**).
 
 ## User Review:
-- Present the output to the user with review loop results (rounds, issues fixed, verdict)
-- Ask for confirmation on technical approach and PR split
-- On approval:
-  - Post as Issue comment (using duplicate prevention from Common Definitions)
-  - If **single PR** → update label to `sdd:implement`
-  - If **multiple PRs** → execute **Child Issue Creation** below
+1. Check skip-review setting (see Common Definitions → Skip Review Setting)
+2. If `design` is in skip-review:
+   - Log: "User review skipped (skip-review: design)"
+   - Auto-approve:
+     - Post as Issue comment (using duplicate prevention from Common Definitions)
+     - If **single PR** → update label to `sdd:implement`
+     - If **multiple PRs** → execute **Child Issue Creation** below
+3. If `design` is NOT in skip-review:
+   - Present the output to the user with review loop results (rounds, issues fixed, verdict)
+   - Ask for confirmation on technical approach and PR split
+   - On approval:
+     - Post as Issue comment (using duplicate prevention from Common Definitions)
+     - If **single PR** → update label to `sdd:implement`
+     - If **multiple PRs** → execute **Child Issue Creation** below
 
 ## Child Issue Creation (when multiple PRs are needed):
 
