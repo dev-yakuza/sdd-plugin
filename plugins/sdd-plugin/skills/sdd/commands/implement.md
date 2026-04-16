@@ -25,25 +25,25 @@ Test scope: Unit tests / UI tests (widget tests, golden tests, etc.)
    - Child Issue: `feat/<parent-feature>/<child-feature>` (e.g. `feat/user-profile/avatar-upload`)
 3. Write test plan for this PR
 4. Write implementation plan based on test plan
-5. **Review Loop**: Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with the plan (stage: **implement**)
+5. **Review Loop**: Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with the plan (stage: **implement**, review point: **Plan (3-0)**)
 6. **User review**: present review loop results, confirm plan direction before proceeding
 
 ### 3-1. Red: Write Failing Tests
 1. Write test code based on test plan
 2. Run tests → confirm failure (Red)
-3. **Review Loop**: Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with the test code (stage: **implement**)
+3. **Review Loop**: Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with the test code (stage: **implement**, review point: **Red - Test Code (3-1)**)
 4. **User review**: present review loop results, confirm test code
 
 ### 3-2. Green: Minimal Implementation
 1. Implement minimal code to pass tests
 2. Run tests → confirm pass (Green)
-3. **Review Loop**: Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with the implementation code (stage: **implement**)
+3. **Review Loop**: Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with the implementation code (stage: **implement**, review point: **Green - Implementation (3-2)**)
 4. **User review**: present review loop results, confirm implementation direction
 
 ### 3-3. Refactor: Improve Code
 1. Remove duplication, improve readability, clean up structure
 2. Run tests → confirm still passing (Green)
-3. **Review Loop**: Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with the refactored code (stage: **implement**)
+3. **Review Loop**: Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with the refactored code (stage: **implement**, review point: **Refactor (3-3)**)
 4. **User review**: present review loop results, confirm refactoring result
 
 ### 3-4. PR Creation & Code Review
@@ -56,7 +56,7 @@ Test scope: Unit tests / UI tests (widget tests, golden tests, etc.)
    - Single Issue: `gh pr create --title "..." --body "Closes #$1\n\n...\n\n## Manual Test Checklist\n<checklist>"`
    - Child Issue: `gh pr create --title "..." --body "Closes #$1\nParent Issue: #<parent>\n\n...\n\n## Manual Test Checklist\n<checklist>"`
 4. Re-run all tests → confirm pass
-5. **Review Loop**: Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with the implementation changes (stage: **implement**)
+5. **Review Loop**: Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with the implementation changes (stage: **implement**, review point: **PR Final (3-4)**)
 6. **User review**: present review loop results (rounds, issues fixed, verdict), final confirmation
 7. Update label to `sdd:test`
 
