@@ -2,6 +2,10 @@
 
 **Stage 3: Implementation - TDD Cycle (Red → Green → Refactor)**
 
+## Rules
+- Do NOT set Claude as co-author in git commits.
+- Check existing git history for branch naming and commit message conventions, and follow the same format.
+
 ## Determine Issue type:
 
 1. Check if this Issue has child Issues:
