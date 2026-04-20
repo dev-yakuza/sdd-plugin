@@ -27,5 +27,6 @@ Workflow:
   Interrupted? Run: /sdd resume <issue> → auto-detects stage and continues
 
 Tips:
-  - Run /clear between stages to save tokens (outputs are saved to GitHub)
+  - Each stage runs heavy work in a subagent to minimize token usage
+  - In skip-review mode, stages auto-proceed via subagents (context is isolated automatically)
 ```

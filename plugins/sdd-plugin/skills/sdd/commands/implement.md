@@ -22,58 +22,67 @@
 
 Test scope: Unit tests / UI tests (widget tests, golden tests, etc.)
 
-### 3-0. PR Kickoff: Plan
-1. Read design output from Issue comments
-2. Create feature branch:
-   - Single Issue: `feat/<feature-name>`
-   - Child Issue: `feat/<parent-feature>/<child-feature>` (e.g. `feat/user-profile/avatar-upload`)
-3. Write test plan for this PR
-4. Write implementation plan based on test plan
-5. **Review Loop**: Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with the plan (stage: **implement**, review point: **Plan (3-0)**)
-6. **User review**: Check skip-review setting (see Common Definitions → Skip Review Setting)
-   - If `implement` is in skip-review → log "User review skipped (skip-review: implement)" and proceed
-   - Otherwise → present review loop results, confirm plan direction before proceeding
+### Phase 1: Plan (via subagent)
 
-### 3-1. Red: Write Failing Tests
-1. Write test code based on test plan
-2. Run tests → confirm failure (Red)
-3. **Review Loop**: Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with the test code (stage: **implement**, review point: **Red - Test Code (3-1)**)
-4. **User review**: Check skip-review setting (see Common Definitions → Skip Review Setting)
-   - If `implement` is in skip-review → log "User review skipped (skip-review: implement)" and proceed
-   - Otherwise → present review loop results, confirm test code
+Use the **Agent tool** to spawn a subagent with the following instructions:
 
-### 3-2. Green: Minimal Implementation
-1. Implement minimal code to pass tests
-2. Run tests → confirm pass (Green)
-3. **Review Loop**: Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with the implementation code (stage: **implement**, review point: **Green - Implementation (3-2)**)
-4. **User review**: Check skip-review setting (see Common Definitions → Skip Review Setting)
-   - If `implement` is in skip-review → log "User review skipped (skip-review: implement)" and proceed
-   - Otherwise → present review loop results, confirm implementation direction
+> **Subagent instructions:**
+>
+> You are executing SDD Stage 3 (Implement) - Plan phase for Issue $1.
+>
+> 1. Read design output from Issue comments
+> 2. Create feature branch:
+>    - Single Issue: `feat/<feature-name>`
+>    - Child Issue: `feat/<parent-feature>/<child-feature>` (e.g. `feat/user-profile/avatar-upload`)
+> 3. Write test plan for this PR
+> 4. Write implementation plan based on test plan
+> 5. **AI Review**: Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with the plan (stage: **implement**, review point: **Plan (3-0)**)
+> 6. Return the plan along with review loop results (rounds, issues fixed, verdict)
 
-### 3-3. Refactor: Improve Code
-1. Remove duplication, improve readability, clean up structure
-2. Run tests → confirm still passing (Green)
-3. **Review Loop**: Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with the refactored code (stage: **implement**, review point: **Refactor (3-3)**)
-4. **User review**: Check skip-review setting (see Common Definitions → Skip Review Setting)
-   - If `implement` is in skip-review → log "User review skipped (skip-review: implement)" and proceed
-   - Otherwise → present review loop results, confirm refactoring result
+**User review**: Check skip-review setting (see Common Definitions → Skip Review Setting)
+- If `implement` is in skip-review → log "User review skipped (skip-review: implement)" and proceed
+- Otherwise → present the subagent's plan and review loop results, confirm plan direction before proceeding
 
-### 3-4. PR Creation & Code Review
-1. Summarize changes
-2. Create manual test checklist for this PR's scope:
-   - Based on the changes made, list items a reviewer should manually verify
-   - Focus on UI behavior, user flows, edge cases that automated tests don't cover
-   - Format as a markdown checklist (e.g. `- [ ] Verify button click navigates to...`)
-3. Create PR with manual test checklist included:
-   - Single Issue: `gh pr create --title "..." --body "Closes #$1\n\n...\n\n## Manual Test Checklist\n<checklist>"`
-   - Child Issue: `gh pr create --title "..." --body "Closes #$1\nParent Issue: #<parent>\n\n...\n\n## Manual Test Checklist\n<checklist>"`
-4. Re-run all tests → confirm pass
-5. **Review Loop**: Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with the implementation changes (stage: **implement**, review point: **PR Final (3-4)**)
-6. **User review**: Check skip-review setting (see Common Definitions → Skip Review Setting)
-   - If `pr` is in skip-review → log "User review skipped (skip-review: pr)" and proceed
-   - Otherwise → present review loop results (rounds, issues fixed, verdict), final confirmation
-7. Update label to `sdd:test`
-8. If `pr` is in skip-review → **auto-proceed**: read `${CLAUDE_SKILL_DIR}/commands/test.md` and execute immediately with the same issue number
+### Phase 2: TDD + PR (via subagent)
+
+Use the **Agent tool** to spawn a subagent with the following instructions:
+
+> **Subagent instructions:**
+>
+> You are executing SDD Stage 3 (Implement) - TDD cycle for Issue $1.
+> Read the design output from Issue comments for context.
+>
+> #### 3-1. Red: Write Failing Tests
+> 1. Write test code based on the plan
+> 2. Run tests → confirm failure (Red)
+> 3. **AI Review**: Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with the test code (stage: **implement**, review point: **Red - Test Code (3-1)**)
+>
+> #### 3-2. Green: Minimal Implementation
+> 1. Implement minimal code to pass tests
+> 2. Run tests → confirm pass (Green)
+> 3. **AI Review**: Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with the implementation code (stage: **implement**, review point: **Green - Implementation (3-2)**)
+>
+> #### 3-3. Refactor: Improve Code
+> 1. Remove duplication, improve readability, clean up structure
+> 2. Run tests → confirm still passing (Green)
+> 3. **AI Review**: Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with the refactored code (stage: **implement**, review point: **Refactor (3-3)**)
+>
+> #### 3-4. PR Creation
+> 1. Summarize changes
+> 2. Create manual test checklist for this PR's scope:
+>    - Based on the changes made, list items a reviewer should manually verify
+>    - Focus on UI behavior, user flows, edge cases that automated tests don't cover
+>    - Format as a markdown checklist (e.g. `- [ ] Verify button click navigates to...`)
+> 3. Create PR with manual test checklist included:
+>    - Single Issue: `gh pr create --title "..." --body "Closes #$1\n\n...\n\n## Manual Test Checklist\n<checklist>"`
+>    - Child Issue: `gh pr create --title "..." --body "Closes #$1\nParent Issue: #<parent>\n\n...\n\n## Manual Test Checklist\n<checklist>"`
+> 4. Re-run all tests → confirm pass
+> 5. **AI Review**: Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with the implementation changes (stage: **implement**, review point: **PR Final (3-4)**)
+> 6. Return the PR URL, change summary, and review loop results (rounds, issues fixed, verdict)
+
+**User review**: Check skip-review setting (see Common Definitions → Skip Review Setting)
+- If `pr` is in skip-review → log "User review skipped (skip-review: pr)", update label to `sdd:test`, then **auto-proceed**: use the **Agent tool** to spawn a subagent that executes `/sdd test $1`
+- Otherwise → present the subagent's results (PR URL, change summary, review loop results), final confirmation. On approval: update label to `sdd:test`
 
 ## After child Issue reaches `sdd:done`:
 
@@ -100,6 +109,3 @@ If this Issue is a child Issue (Issue body contains `Parent Issue: #<number>`):
    - Read each child Issue's labels directly (do NOT rely only on the comment table)
    - If all `sdd:done` → add a comment to the parent Issue notifying all children are complete, and suggest running `/sdd test <parent>` or `/sdd resume <parent>`
    - If not → report remaining children to the user and ask which child to work on next
-
-## After Completion:
-Suggest to the user: "Run `/clear` before the next stage to save tokens. All outputs are saved to GitHub."

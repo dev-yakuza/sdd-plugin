@@ -4,48 +4,55 @@
 
 Define HOW to implement based on the requirements.
 
-## Process:
-1. Read analyze output from Issue comments:
-   ```bash
-   gh api repos/{owner}/{repo}/issues/$1/comments --jq '.[] | select(.body | contains("sdd:analyze:output")) | .body'
-   ```
-   - If no analyze output found → report error: "Run `/sdd analyze $1` first" and stop
-2. Check if this is a child Issue (body contains `Parent Issue: #<number>`):
-   - If yes: read the parent Issue's design output for context (architecture decisions, PR split rationale, constraints)
-     ```bash
-     gh api repos/{owner}/{repo}/issues/<parent>/comments --jq '.[] | select(.body | contains("sdd:design:output")) | .body'
-     ```
-   - The child's design must be consistent with the parent's overall architecture and design decisions
-   - Focus on the detailed design for this child's sub-feature only
-3. Explore the codebase using a **dedicated Explore agent** (Agent tool with `subagent_type: Explore`, `model: "sonnet"`):
-   - Provide the agent with the analyze output and ask it to investigate:
-     - Existing architecture and patterns relevant to the requirements
-     - Files, modules, and dependencies that would be affected
-     - Existing test structure and conventions
-     - Similar implementations in the codebase that can be referenced
-   - Do **NOT** share design ideas with the agent — let it explore objectively
-   - Use the agent's findings as input for the design steps below
-4. Identify impact scope (related files, screens, data) based on exploration results
-5. Design file structure changes
-6. Design data model changes (if applicable)
-7. Identify constraints and risks
-8. Create feature list with PR split
-9. Read the language setting from `.github/.sdd-lang`. If the file does not exist, detect the primary language of the Issue body and map to the closest supported language (`en`, `ko`, `ja`). If unsupported, default to `en`.
-10. Format output using the template in `${CLAUDE_SKILL_DIR}/templates/{lang}/output_design.md`
+## Phase 1: Design (via subagent)
 
-## Review Loop:
-Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with the output above (stage: **design**).
+Use the **Agent tool** to spawn a subagent with the following instructions. This isolates the heavy work from the main context to save tokens.
 
-## User Review:
+> **Subagent instructions:**
+>
+> You are executing SDD Stage 2 (Design) for Issue $1.
+>
+> 1. Read analyze output from Issue comments:
+>    ```bash
+>    gh api repos/{owner}/{repo}/issues/$1/comments --jq '.[] | select(.body | contains("sdd:analyze:output")) | .body'
+>    ```
+>    - If no analyze output found → report error: "Run `/sdd analyze $1` first" and stop
+> 2. Check if this is a child Issue (body contains `Parent Issue: #<number>`):
+>    - If yes: read the parent Issue's design output for context (architecture decisions, PR split rationale, constraints)
+>      ```bash
+>      gh api repos/{owner}/{repo}/issues/<parent>/comments --jq '.[] | select(.body | contains("sdd:design:output")) | .body'
+>      ```
+>    - The child's design must be consistent with the parent's overall architecture and design decisions
+>    - Focus on the detailed design for this child's sub-feature only
+> 3. Explore the codebase using a **dedicated Explore agent** (Agent tool with `subagent_type: Explore`, `model: "sonnet"`):
+>    - Provide the agent with the analyze output and ask it to investigate:
+>      - Existing architecture and patterns relevant to the requirements
+>      - Files, modules, and dependencies that would be affected
+>      - Existing test structure and conventions
+>      - Similar implementations in the codebase that can be referenced
+>    - Do **NOT** share design ideas with the agent — let it explore objectively
+>    - Use the agent's findings as input for the design steps below
+> 4. Identify impact scope (related files, screens, data) based on exploration results
+> 5. Design file structure changes
+> 6. Design data model changes (if applicable)
+> 7. Identify constraints and risks
+> 8. Create feature list with PR split
+> 9. Read the language setting from `.github/.sdd-lang`. If the file does not exist, detect the primary language of the Issue body and map to the closest supported language (`en`, `ko`, `ja`). If unsupported, default to `en`.
+> 10. Format output using the template in `${CLAUDE_SKILL_DIR}/templates/{lang}/output_design.md`
+> 11. **AI Review**: Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with the output above (stage: **design**)
+> 12. Return the final output along with review loop results (rounds, issues fixed, verdict)
+
+## Phase 2: User Review (in main context)
+
 1. Check skip-review setting (see Common Definitions → Skip Review Setting)
 2. If `design` is in skip-review:
    - Log: "User review skipped (skip-review: design)"
    - Auto-approve:
      - Post as Issue comment (using duplicate prevention from Common Definitions)
-     - If **single PR** → update label to `sdd:implement`, then **auto-proceed**: read `${CLAUDE_SKILL_DIR}/commands/implement.md` and execute immediately with the same issue number
+     - If **single PR** → update label to `sdd:implement`, then **auto-proceed**: use the **Agent tool** to spawn a subagent that executes `/sdd implement $1`. This isolates the next stage's context and prevents token accumulation.
      - If **multiple PRs** → execute **Child Issue Creation** below
 3. If `design` is NOT in skip-review:
-   - Present the output to the user with review loop results (rounds, issues fixed, verdict)
+   - Present the subagent's output to the user with review loop results (rounds, issues fixed, verdict)
    - Ask for confirmation on technical approach and PR split
    - On approval:
      - Post as Issue comment (using duplicate prevention from Common Definitions)
@@ -72,6 +79,3 @@ When the design identifies 2 or more PRs, create a child Issue for each sub-feat
 4. Post design output as Issue comment on parent Issue
 5. Update parent Issue label to `sdd:implement`
 6. Ask user which child Issue to start with, then execute **ANALYZE** on that child Issue
-
-## After Completion:
-Suggest to the user: "Run `/clear` before the next stage to save tokens. All outputs are saved to GitHub."
