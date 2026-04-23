@@ -22,16 +22,38 @@ Use the **Agent tool** to spawn a subagent with the following instructions. This
 >      ```
 >    - Use parent context to understand the broader scope, but focus analysis on this child's sub-feature only
 > 3. Classify the request type (new feature / enhancement / bug fix / refactoring)
-> 4. Analyze What (feature list) and Why (background, motivation)
-> 5. Split into feature list with priorities
-> 6. Read the language setting from `.github/.sdd-lang`. If the file does not exist, detect the primary language of the Issue body and map to the closest supported language (`en`, `ko`, `ja`). If unsupported, default to `en`.
-> 7. Format output using the template in `${CLAUDE_SKILL_DIR}/templates/{lang}/output_analyze.md`
-> 8. **AI Review**: Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with the output above (stage: **analyze**)
-> 9. Return the final output along with review loop results (rounds, issues fixed, verdict)
+> 4. Assess whether code changes are actually needed. Conclude **no-action** if:
+>    - The reported issue is not reproducible and lacks sufficient evidence
+>    - The issue has already been fixed (check recent commits/PRs)
+>    - The request is out of scope or a duplicate of another Issue
+>    - The described behavior is working as intended
+>    - If **no-action**: return `verdict: no-action` with a clear explanation of why no code change is needed. Do NOT proceed to steps 5–9.
+> 5. Analyze What (feature list) and Why (background, motivation)
+> 6. Split into feature list with priorities
+> 7. Read the language setting from `.github/.sdd-lang`. If the file does not exist, detect the primary language of the Issue body and map to the closest supported language (`en`, `ko`, `ja`). If unsupported, default to `en`.
+> 8. Format output using the template in `${CLAUDE_SKILL_DIR}/templates/{lang}/output_analyze.md`
+> 9. **AI Review**: Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with the output above (stage: **analyze**)
+> 10. Return the final output along with review loop results (rounds, issues fixed, verdict)
 
 If the subagent reports missing information in the Issue, ask the user to fill it in (do NOT ask How questions) and re-run the subagent.
 
 ## Phase 2: User Review (in main context)
+
+### If subagent returned `verdict: no-action`:
+
+1. Check skip-review setting (see Common Definitions → Skip Review Setting)
+2. If `analyze` is in skip-review:
+   - Log: "No action needed — skipping remaining stages"
+   - Post the no-action explanation as Issue comment (using duplicate prevention with `<!-- sdd:analyze:output -->` marker)
+   - Update label to `sdd:done`
+   - **Do NOT proceed** to design. Stop here.
+3. If `analyze` is NOT in skip-review:
+   - Present the no-action explanation to the user
+   - Ask for confirmation: "This Issue appears to need no code changes. Close as no-action?"
+   - On approval: post as Issue comment, update label to `sdd:done`
+   - On rejection: user may provide additional context → re-run Phase 1 subagent
+
+### If subagent returned normal analysis output:
 
 1. Check skip-review setting (see Common Definitions → Skip Review Setting)
 2. If `analyze` is in skip-review:

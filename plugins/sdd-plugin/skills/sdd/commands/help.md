@@ -14,6 +14,8 @@ Commands:
   /sdd rollback <issue> <stage>  Roll back to a previous stage (analyze, design, implement)
   /sdd status <issue>    Check current progress
   /sdd review <issue>    AI review of current stage output
+  /sdd batch [issues]    Batch process Issues via separate claude -p sessions
+                         No args = all open; "1,2,3" = specific issues
   /sdd help              Show this help message
 
 Workflow:
@@ -29,4 +31,6 @@ Workflow:
 Tips:
   - Each stage runs heavy work in a subagent to minimize token usage
   - In skip-review mode, stages auto-proceed via subagents (context is isolated automatically)
+  - Batch mode: /sdd batch generates a script for unattended processing
+    of multiple issues. Run the script in a separate terminal.
 ```
