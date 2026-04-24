@@ -128,6 +128,7 @@ cleanup() {
 trap cleanup EXIT INT TERM
 
 # --- Process Issues ---
+BATCH_START=$(date +%s)
 TOTAL=${#ISSUES[@]}
 SUCCEEDED=0
 FAILED=0
@@ -159,6 +160,33 @@ for i in "${!ISSUES[@]}"; do
   echo ""
 done
 
+# --- Aggregate stats from stream-json logs ---
+BATCH_END=$(date +%s)
+BATCH_ELAPSED=$((BATCH_END - BATCH_START))
+BATCH_MIN=$((BATCH_ELAPSED / 60))
+BATCH_SEC=$((BATCH_ELAPSED % 60))
+
+TOTAL_INPUT=0
+TOTAL_OUTPUT=0
+TOTAL_CACHE_READ=0
+TOTAL_CACHE_CREATE=0
+TOTAL_COST=0
+
+for LOG in "$LOG_DIR"/issue-*-"${TIMESTAMP}".log; do
+  [ -f "$LOG" ] || continue
+  STATS=$(jq -r 'select(.type == "result") | "\(.usage.input_tokens // 0) \(.usage.output_tokens // 0) \(.usage.cache_read_input_tokens // 0) \(.usage.cache_creation_input_tokens // 0) \(.total_cost_usd // 0)"' "$LOG" 2>/dev/null | tail -1)
+  if [ -n "$STATS" ]; then
+    read -r IN OUT CR CC COST <<< "$STATS"
+    TOTAL_INPUT=$((TOTAL_INPUT + IN))
+    TOTAL_OUTPUT=$((TOTAL_OUTPUT + OUT))
+    TOTAL_CACHE_READ=$((TOTAL_CACHE_READ + CR))
+    TOTAL_CACHE_CREATE=$((TOTAL_CACHE_CREATE + CC))
+    TOTAL_COST=$(echo "$TOTAL_COST + $COST" | bc)
+  fi
+done
+
+TOTAL_CONTEXT=$((TOTAL_INPUT + TOTAL_OUTPUT + TOTAL_CACHE_READ + TOTAL_CACHE_CREATE))
+
 # --- Summary ---
 echo "============================================================"
 echo "  SDD Batch Complete"
@@ -168,9 +196,15 @@ echo "  Succeeded: $SUCCEEDED"
 echo "  Failed:    $FAILED"
 if [ ${#FAILED_ISSUES[@]} -gt 0 ]; then
   echo "  Failed:    ${FAILED_ISSUES[*]}"
-  echo ""
-  echo "  Check logs in $LOG_DIR/ for details."
 fi
+echo ""
+echo "  Time:      ${BATCH_MIN}m ${BATCH_SEC}s"
+echo "  Cost:      \$${TOTAL_COST}"
+echo "  Tokens:    $(printf "%'d" $TOTAL_CONTEXT) total"
+echo "               in: $(printf "%'d" $TOTAL_INPUT)  out: $(printf "%'d" $TOTAL_OUTPUT)"
+echo "               cache read: $(printf "%'d" $TOTAL_CACHE_READ)  cache create: $(printf "%'d" $TOTAL_CACHE_CREATE)"
+echo ""
+echo "  Logs: $LOG_DIR/"
 echo "============================================================"
 ```
 
