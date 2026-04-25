@@ -94,7 +94,8 @@ Tool permissions for batch mode (claude -p sessions)
 
 Display rules:
 - `✓` = selected by default, `◻` = not selected by default
-- Permissions already in `settings.local.json` → show as `✓ (already set)` and skip
+- **Exact match only**: a scoped permission (e.g. `Edit(/path/**)`) does NOT satisfy an unscoped requirement (e.g. `Edit`). Only an exact unscoped `Edit` entry counts as "already set" for the `Edit` requirement. If only a scoped variant exists, the unscoped permission must still be added.
+- Permissions already in `settings.local.json` (exact match) → show as `✓ (already set)` and skip
 - If `Bash` (unscoped) is already set → skip all `Bash(...)` entries and show `Bash ✓ (already set)`
 
 4. Ask user which items to change:
