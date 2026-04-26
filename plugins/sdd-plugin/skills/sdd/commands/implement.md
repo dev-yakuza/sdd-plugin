@@ -67,7 +67,14 @@ Use the **Agent tool** to spawn a subagent with the following instructions:
 > 2. Run tests → confirm still passing (Green)
 > 3. **AI Review**: Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with the refactored code (stage: **implement**, review point: **Refactor (3-3)**)
 >
-> #### 3-4. PR Creation
+> #### 3-4. E2E Test
+> 1. Detect existing E2E/integration test setup (framework, directory structure, config files, run command)
+> 2. If E2E setup exists → write E2E tests for the implemented feature, following existing patterns and directory structure
+> 3. If no E2E setup exists → skip E2E and report it (will be addressed in test stage with user confirmation)
+> 4. Run E2E tests → check results
+> 5. **AI Review**: Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with E2E test code (stage: **implement**, review point: **E2E Test (3-4)**)
+>
+> #### 3-5. PR Creation
 > 1. Summarize changes
 > 2. Create manual test checklist for this PR's scope:
 >    - Based on the changes made, list items a reviewer should manually verify
@@ -77,8 +84,8 @@ Use the **Agent tool** to spawn a subagent with the following instructions:
 >    - Single Issue: `gh pr create --title "..." --body "Refs #$1\n\n...\n\n## Manual Test Checklist\n<checklist>"`
 >    - Child Issue: `gh pr create --title "..." --body "Refs #$1\nParent Issue: #<parent>\n\n...\n\n## Manual Test Checklist\n<checklist>"`
 > 4. Re-run all tests → confirm pass
-> 5. **AI Review**: Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with the implementation changes (stage: **implement**, review point: **PR Final (3-4)**)
-> 6. Return the PR URL, change summary, and review loop results (rounds, issues fixed, verdict)
+> 5. **AI Review**: Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with the implementation changes (stage: **implement**, review point: **PR Final (3-5)**)
+> 6. Return the PR URL, change summary, E2E test results (or skip reason), and review loop results (rounds, issues fixed, verdict)
 
 **User review**: Check skip-review setting (see Common Definitions → Skip Review Setting)
 - If `pr` is in skip-review → log "User review skipped (skip-review: pr)", update label to `sdd:test`, then:
