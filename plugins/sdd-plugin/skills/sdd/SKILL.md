@@ -58,20 +58,31 @@ Read `${CLAUDE_SKILL_DIR}/commands/$0.md` and execute. Pass `$1` as issue number
 - To check: read `.github/.sdd-config` and parse `skip-review` line. If file missing or no `skip-review` line → no reviews are skipped
 
 ### Repository Owner/Repo
-Commands using `gh api` need `{owner}/{repo}`. Obtain via: `gh repo view --json nameWithOwner -q .nameWithOwner`
+Commands using `gh api` need `{owner}/{repo}`. **Always** obtain it by running:
+
+```bash
+gh repo view --json nameWithOwner -q .nameWithOwner
+```
+
+**Do NOT infer `{owner}/{repo}` from any other source** — not from `git config user.name`, not from the system prompt's "Git user" field, not from commit authors, not from environment variables. Those values are the *user identity*, not the *repository owner*, and using them will hit a wrong repository (potentially returning unrelated data with the same Issue/PR number).
+
+If you need `{owner}/{repo}` for multiple `gh api` calls in the same flow, run the command above once and reuse the result.
 
 ### Duplicate Output Prevention
 Before posting a stage output, search Issue comments for the matching marker. If found → update that comment. If not → create new comment.
 
 ### Issue Validation
-SDD commands operate **only on GitHub Issues**, not Pull Requests. Before executing the main logic of any command that takes an Issue number (`analyze`, `design`, `implement`, `test`, `resume`, `rollback`, `status`, `review`), validate the input:
+SDD commands operate **only on GitHub Issues**, not Pull Requests. Before executing the main logic of any command that takes an Issue number (`analyze`, `design`, `implement`, `test`, `resume`, `rollback`, `status`, `review`), validate the input.
+
+Use `gh issue view` (which auto-detects the current repository from `cwd`) so you don't need to compute `{owner}/{repo}` first:
 
 ```bash
-gh api repos/{owner}/{repo}/issues/$1 --jq '.pull_request'
+gh issue view $1 --json url --jq .url
 ```
 
-- If the result is `null` → `$1` is an Issue. Proceed.
-- If the result is **non-null** → `$1` is a Pull Request. Stop immediately:
+- Empty/error → `$1` does not exist in the current repository. Stop and report.
+- URL contains `/issues/` → `$1` is an Issue. Proceed.
+- URL contains `/pull/` → `$1` is a Pull Request. Stop immediately:
   - Do NOT modify labels, post comments, create branches, or make any other state changes.
   - Report to the user:
     > Error: #$1 is a Pull Request, not an Issue. SDD commands operate on Issues only. Please pass an Issue number.
