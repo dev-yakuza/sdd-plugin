@@ -30,11 +30,19 @@ Use the **Agent tool** to spawn a subagent with the following instructions:
 >
 > You are executing SDD Stage 3 (Implement) - Plan phase for Issue $1.
 >
-> 1. Read design output from Issue comments
+> **Context to read** (only these — do NOT read analyze output):
+> - Design output from Issue comments (the `<!-- sdd:design:output -->` comment)
+> - Definition of Done from the Issue body
+>
+> 1. Read the context specified above
 > 2. Create feature branch:
 >    - Single Issue: `feat/<feature-name>`
 >    - Child Issue: `feat/<parent-feature>/<child-feature>` (e.g. `feat/user-profile/avatar-upload`)
-> 3. Write test plan for this PR
+> 3. Write test plan for this PR, classifying test cases by behavioral path:
+>    - **Happy path**: Normal expected flows
+>    - **Error path**: Invalid input, failure scenarios, error handling
+>    - **Boundary conditions**: Edge values, empty/null, limits, overflow
+>    - **Concurrent/State**: Race conditions, state transitions (if applicable)
 > 4. Write implementation plan based on test plan
 > 5. **AI Review**: Read `${CLAUDE_SKILL_DIR}/commands/ai-review.md` and execute with the plan (stage: **implement**, review point: **Plan (3-0)**)
 > 6. Return the plan along with review loop results (rounds, issues fixed, verdict)
@@ -50,7 +58,10 @@ Use the **Agent tool** to spawn a subagent with the following instructions:
 > **Subagent instructions:**
 >
 > You are executing SDD Stage 3 (Implement) - TDD cycle for Issue $1.
-> Read the design output from Issue comments for context.
+>
+> **Context to read** (only these — do NOT read analyze output):
+> - Design output from Issue comments (the `<!-- sdd:design:output -->` comment)
+> - Definition of Done from the Issue body
 >
 > #### 3-1. Red: Write Failing Tests
 > 1. Write test code based on the plan

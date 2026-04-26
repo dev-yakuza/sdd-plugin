@@ -27,9 +27,12 @@ Use the **Agent tool** to spawn a subagent with the following instructions. This
 >
 > You are executing SDD Stage 4 (Test) for Issue $1. This is a single/child Issue — E2E tests are already in the PR.
 >
+> **Context to read** (only these — do NOT read analyze/design outputs):
+> - Implementation PR for this Issue (find via `gh pr list --search "Refs #$1"`)
+> - Definition of Done from the Issue body
+>
 > ### 4-1. Verify Existing Tests
-> 1. Read analyze/design outputs from Issue comments
-> 2. Read the implementation PR to understand what was built and what tests exist
+> 1. Read the implementation PR to understand what was built and what tests exist
 > 3. Run existing tests (unit, widget, E2E) → confirm all pass
 > 4. Evaluate test coverage: check if E2E tests adequately cover the requirements
 >    - If E2E tests were skipped in Stage 3 (no E2E setup): report it
@@ -78,6 +81,11 @@ Use the **Agent tool** to spawn a subagent with the following instructions.
 >
 > You are executing SDD Stage 4 (Test) for Parent Issue $1.
 >
+> **Context to read** (only these — minimize token usage):
+> - Design output from Issue comments (the `<!-- sdd:design:output -->` comment) — for understanding the overall architecture
+> - Child Issues' implementation PRs (find via children comment)
+> - Definition of Done from the Issue body
+>
 > ### 4-0. Test Setup
 > 1. Explore the codebase to detect the project's existing test setup:
 >    - Test framework (e.g. Jest, Pytest, Go test, Playwright, Cypress, etc.)
@@ -88,7 +96,7 @@ Use the **Agent tool** to spawn a subagent with the following instructions.
 >    - Recommend a framework based on the project's tech stack and report it (do NOT set up without user confirmation)
 >
 > ### 4-1. Integration E2E Test
-> 1. Read analyze/design outputs from parent Issue comments
+> 1. Read the context specified above
 > 2. Read all child Issues' implementation PRs to understand what was built
 > 3. Identify integration points between child Issues that need cross-child testing
 > 4. If integration tests are needed:
