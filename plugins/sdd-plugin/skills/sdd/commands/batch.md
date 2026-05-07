@@ -4,6 +4,8 @@
 
 Each Issue runs in an independent `claude -p` session with skip-review enabled (analyze through PR creation), minimizing token consumption. Human reviews PRs and runs QA after batch completes.
 
+> ⚠️ **Security note**: The generated batch script invokes each child session with `--dangerously-skip-permissions`. This bypasses **all** permission prompts and sandbox boundaries in the child session, so test runners (e.g. `flutter test`), commit hooks, and `git push` / `gh pr create` can execute unattended. Use `/sdd batch` only when you accept that the child sessions may run any tool without prompting. All tool calls are recorded in `.github/.sdd-batch-logs/<issue>-<timestamp>.log` for audit.
+
 ## Argument Parsing:
 
 Parse `$1`:
@@ -69,6 +71,8 @@ Ask user for confirmation before proceeding.
 ## Phase 2: Verify Tool Permissions
 
 `claude -p` sessions need tool permissions pre-configured in `.claude/settings.local.json`.
+
+> Note: The generated script also passes `--dangerously-skip-permissions` to each child `claude -p`, which bypasses prompts and sandbox boundaries at runtime. The permissions registered here are still useful as a documented allowlist (and as a fallback if the user removes the flag), but they are **not strictly required** for the script to run unattended once the flag is in place. Treat the items below as the recommended baseline.
 
 1. Read `.claude/settings.local.json` if it exists.
 2. Check which permissions from the groups below are already present.
@@ -247,7 +251,11 @@ while [ ${#QUEUE[@]} -gt 0 ]; do
 
   while true; do
     EXIT_CODE=0
-    claude -p --verbose --output-format stream-json "/sdd resume $ISSUE" > "$LOG_FILE" 2>&1 || EXIT_CODE=$?
+    # --dangerously-skip-permissions: bypass per-call permission prompts AND
+    # the sandbox boundary in the child session. Required for unattended runs
+    # because subagents otherwise hit "Run outside of the sandbox" on
+    # `flutter test`, pre-commit hooks invoking the toolchain, `git push`, etc.
+    claude -p --verbose --output-format stream-json --dangerously-skip-permissions "/sdd resume $ISSUE" > "$LOG_FILE" 2>&1 || EXIT_CODE=$?
 
     if [ "$EXIT_CODE" -eq 0 ]; then
       echo "  ✓ Issue #$ISSUE completed"
