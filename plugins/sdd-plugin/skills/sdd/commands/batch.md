@@ -309,10 +309,19 @@ while [ ${#QUEUE[@]} -gt 0 ]; do
       SUCCEEDED=$((SUCCEEDED + 1))
 
       # --- Auto-discover child Issues created by this parent ---
+      # Match the parent reference across all supported language templates:
+      #   en: "Parent Issue: #N"
+      #   ko: "상위 Issue: #N"
+      #   ja: "親Issue: #N"
+      # Approach: filter sdd:child open issues, then jq-test body for any of
+      # the three templated parent references (with non-digit boundary so
+      # #683 doesn't match #6831).
       if [ -n "$OWNER_REPO" ]; then
         CHILDREN=$(gh issue list --repo "$OWNER_REPO" \
-          --search "in:body \"Parent Issue: #$ISSUE\" is:open -label:sdd:done" \
-          --json number --jq '.[].number' 2>/dev/null || true)
+          --label sdd:child --state open --limit 200 \
+          --json number,body \
+          --jq "[.[] | select(.body | test(\"(Parent|상위 |親)Issue: #${ISSUE}([^0-9]|\$)\"))] | .[] | .number" \
+          2>/dev/null || true)
         for CHILD in $CHILDREN; do
           case "$SEEN" in
             *" #$CHILD "*) ;;
